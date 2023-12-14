@@ -18,7 +18,8 @@ class Schedular {
 
   private:
     std::deque<Fiber *> fibers;
+    std::deque<Fiber *> running_fibers;
     Context context;
-    Fiber *current_fiber;
-    Fiber *fiber_on_hold;
+    bool exit_flag;
+    bool yield_flag;
 };
