@@ -4,7 +4,9 @@
 #include <cstdio>
 #include <cstring>
 
-Fiber::Fiber(void (*function)(), void *data) {
+Fiber::Fiber(void (*function)(), void *data, bool run) {
+    auto_run = run;
+
     stack_bottom = new char[4096];
 
     stack_top = stack_bottom + 4096;
@@ -14,13 +16,13 @@ Fiber::Fiber(void (*function)(), void *data) {
 
     this->data = data;
 
-    context = Context();
-    context.rip = (void *)function;
-    context.rsp = stack_top;
+    context = new Context;
+    context->rip = (void *)function;
+    context->rsp = stack_top;
 }
 
 Fiber::~Fiber() { delete[] stack_bottom; }
 
-Context *Fiber::get_context() { return &context; }
+Context *Fiber::get_context() { return context; }
 
 void *Fiber::get_data() { return data; }

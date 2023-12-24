@@ -15,7 +15,7 @@ void *get_data() {
 void yield() { S.yield(); }
 
 void spawn(void (*function)(), void *data) {
-    Fiber *f = new Fiber(function, data);
+    Fiber *f = new Fiber(function, data, S.is_running_task());
 
     S.spawn(f);
 }

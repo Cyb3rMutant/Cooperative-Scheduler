@@ -16,12 +16,17 @@ void Schedular::spawn(Fiber *f) { fibers.push_front(f); }
 
 void Schedular::do_it() {
     get_context(&context);
-    if (exit_flag) {
-        exit_flag = false;
-        return;
-    }
     if (!fibers.empty()) {
-        running_fibers.push_back(fibers.back());
+        Fiber *f = fibers.back();
+        if (f->auto_run) {
+            exit_flag = false;
+        }
+
+        if (exit_flag) {
+            exit_flag = false;
+            return;
+        }
+        running_fibers.push_back(f);
         fibers.pop_back();
 
         Context *c = running_fibers.back()->get_context();
@@ -57,3 +62,5 @@ void Schedular::yield() {
         swap_context(out, in);
     }
 }
+
+bool Schedular::is_running_task() { return !running_fibers.empty(); }

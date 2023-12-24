@@ -16,6 +16,8 @@ class Schedular {
 
     void yield();
 
+    bool is_running_task();
+
   private:
     std::deque<Fiber *> fibers;
     std::deque<Fiber *> running_fibers;

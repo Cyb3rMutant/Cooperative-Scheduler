@@ -4,8 +4,10 @@
 
 class Fiber {
   public:
+    bool auto_run;
+
     Fiber() = delete;
-    Fiber(void (*function)(), void *data = nullptr);
+    Fiber(void (*function)(), void *data = nullptr, bool run = false);
     ~Fiber();
 
     Context *get_context();
@@ -13,7 +15,7 @@ class Fiber {
     void *get_data();
 
   private:
-    Context context;
+    Context *context;
     char *stack_top;
     char *stack_bottom;
     void *data;

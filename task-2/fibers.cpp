@@ -7,10 +7,7 @@ Schedular S;
 
 void fiber_exit() { S.fiber_exit(); }
 
-void *get_data() {
-    auto x = S.get_data();
-    return x;
-}
+void *get_data() { return S.get_data(); }
 
 void yield();
 
