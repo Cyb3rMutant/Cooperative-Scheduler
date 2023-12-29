@@ -6,7 +6,10 @@
 
 class Schedular {
   public:
-    Schedular();
+    static Schedular *get_instance();
+
+    Schedular(Schedular &other) = delete;
+    void operator=(const Schedular &) = delete;
     ~Schedular();
 
     void spawn(Fiber *f);
@@ -18,7 +21,11 @@ class Schedular {
 
     bool is_running_task();
 
+    static Schedular *instance;
+
   private:
+    Schedular();
+
     std::deque<Fiber *> fibers;
     std::deque<Fiber *> running_fibers;
     Context context;

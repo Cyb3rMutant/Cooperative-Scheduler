@@ -10,6 +10,14 @@ Schedular::Schedular() {
     exit_flag = false;
 }
 
+Schedular *Schedular::get_instance() {
+    if (instance == nullptr) {
+        instance = new Schedular;
+    }
+
+    return instance;
+}
+
 Schedular::~Schedular() {}
 
 void Schedular::spawn(Fiber *f) { fibers.push_front(f); }
@@ -33,6 +41,7 @@ void Schedular::do_it() {
 
         set_context(c);
     }
+    exit_flag = false;
 }
 
 void Schedular::fiber_exit() {
@@ -64,3 +73,5 @@ void Schedular::yield() {
 }
 
 bool Schedular::is_running_task() { return !running_fibers.empty(); }
+
+Schedular *Schedular::instance = nullptr;

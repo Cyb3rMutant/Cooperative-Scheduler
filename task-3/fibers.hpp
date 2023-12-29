@@ -7,11 +7,15 @@
 /// note call control flow within a fiber must terminate with a call
 /// to fiber_exit. Returning from a fiber without a call fiber_exit is
 /// undefined.
+#include <task-3/scheduler.hpp>
 void fiber_exit();
 
 /// @brief get pointer to data passed as part of fiber creation
 /// @return pointer to data passed in at fiber creation
-void *get_data();
+template <class T> T *get_data() {
+    auto x = Schedular::get_instance()->get_data();
+    return static_cast<T *>(x);
+}
 
 /// @brief yield control back to scheduler
 /// once rescheduled fiber will restart directly following call to

@@ -3,20 +3,14 @@
 #include "scheduler.hpp"
 #include <cstdio>
 
-Schedular S;
+void fiber_exit() { Schedular::get_instance()->fiber_exit(); }
 
-void fiber_exit() { S.fiber_exit(); }
-
-void *get_data() {
-    auto x = S.get_data();
-    return x;
-}
-
-void yield() { S.yield(); }
+void yield() { Schedular::get_instance()->yield(); }
 
 void spawn(void (*function)(), void *data) {
-    Fiber *f = new Fiber(function, data, S.is_running_task());
+    Fiber *f =
+        new Fiber(function, data, Schedular::get_instance()->is_running_task());
 
-    S.spawn(f);
+    Schedular::get_instance()->spawn(f);
 }
-void do_it() { S.do_it(); }
+void do_it() { Schedular::get_instance()->do_it(); }
