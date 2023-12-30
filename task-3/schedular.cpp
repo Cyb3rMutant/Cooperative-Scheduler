@@ -37,7 +37,7 @@ void Schedular::do_it() {
         running_fibers.push_back(f);
         fibers.pop_back();
 
-        Context *c = running_fibers.back()->get_context();
+        Context *c = f->get_context();
 
         set_context(c);
     }
@@ -53,7 +53,9 @@ void Schedular::fiber_exit() {
     }
 
     exit_flag = true;
+    Fiber *f = running_fibers.back();
     running_fibers.pop_back();
+    delete f;
     set_context(&context);
 }
 
