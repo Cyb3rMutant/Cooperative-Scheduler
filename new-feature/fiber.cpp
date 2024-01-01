@@ -1,19 +1,17 @@
 #include "fiber.hpp"
 #include "../context/context.hpp"
+#include "../freelist.cpp"
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+
+MemoryManager manager(10);
 
 Fiber::Fiber(unsigned id, void (*function)(), void *data, bool run,
              unsigned priority) {
     auto_run = run;
 
-    stack_bottom = new char[4096];
-
-    stack_top = stack_bottom + 4096;
-    stack_top =
-        reinterpret_cast<char *>(reinterpret_cast<uintptr_t>(stack_top) & -16L);
-    stack_top -= 128;
+    stack = manager.alloc();
 
     this->id = id;
     this->data = data;
@@ -21,10 +19,10 @@ Fiber::Fiber(unsigned id, void (*function)(), void *data, bool run,
 
     context = new Context;
     context->rip = (void *)function;
-    context->rsp = stack_top;
+    context->rsp = stack->stack_top;
 }
 
-Fiber::~Fiber() { delete[] stack_bottom; }
+Fiber::~Fiber() { manager.dealloc(stack); }
 
 Context *Fiber::get_context() { return context; }
 

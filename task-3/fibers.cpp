@@ -16,4 +16,4 @@ void spawn(void (*function)(), void *data) {
 void do_it() { Schedular::get_instance()->do_it(); }
 
 void auto_run() { Schedular::get_instance()->set_auto_run(true); }
-void manual_run() { Schedular::get_instance()->set_auto_run(true); }
+void manual_run() { Schedular::get_instance()->set_auto_run(false); }

@@ -26,6 +26,16 @@ int main(int argc, char *argv[]) {
     spawn(f1, nullptr, 2);
     spawn(f3, nullptr, 2);
     spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
+    spawn(f4);
 
     do_it();
     do_it();

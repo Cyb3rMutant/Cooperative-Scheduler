@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../context/context.hpp"
+#include "../freelist.cpp"
 
 class Fiber {
   public:
@@ -19,8 +20,7 @@ class Fiber {
 
   private:
     Context *context;
-    char *stack_top;
-    char *stack_bottom;
+    FiberStack *stack;
     void *data;
     unsigned priority;
     unsigned id;
