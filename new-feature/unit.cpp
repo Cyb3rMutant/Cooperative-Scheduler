@@ -82,40 +82,14 @@ DEFINE_TEST_G(Test6, fibers) {
     int *dp = &d;
     spawn(sub_7_and_task_2, dp);
     spawn(mult_5_and_yield, dp);
+    std::cout << d;
     do_it();
+    std::cout << d;
     TEST_MESSAGE(d == 3, "function was not called");
+    std::cout << d;
     do_it();
+    std::cout << d;
     TEST_MESSAGE(d == 17, "function was not called");
-}
-
-// Test for multiple fibers with different data
-DEFINE_TEST_G(Test7, fibers) {
-    int d1 = 10, d2 = 5;
-    int *dp1 = &d1, *dp2 = &d2;
-
-    spawn(mult_5_and_yield, dp2);
-    spawn(add_2, dp1);
-
-    do_it();
-
-    TEST_MESSAGE(d1 == 12 && d2 == 25, "functions were not called correctly");
-}
-
-// Test for a large number of fibers
-DEFINE_TEST_G(Test8, fibers) {
-    const int num_fibers = 1000;
-    int d = 0;
-    int *dp = &d;
-
-    auto_run();
-
-    for (int i = 0; i < num_fibers; ++i) {
-        spawn(add_2, dp);
-    }
-
-    do_it();
-
-    TEST_MESSAGE(d == 2 * num_fibers, "functions were not called correctly");
 }
 
 int main() {

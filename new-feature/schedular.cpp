@@ -3,12 +3,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <deque>
+#include <queue>
 
 Schedular::Schedular() {
     context = Context();
-    fibers = std::deque<Fiber *>();
+    fibers = std::priority_queue<Fiber *, std::vector<Fiber *>, CompareFiber>();
+    running_fibers = std::deque<Fiber *>();
     exit_flag = false;
-    auto_run = false;
+    next_id = 1;
 }
 
 Schedular *Schedular::get_instance() {
@@ -21,25 +23,25 @@ Schedular *Schedular::get_instance() {
 
 Schedular::~Schedular() {}
 
-void Schedular::spawn(Fiber *f) { fibers.push_front(f); }
+void Schedular::spawn(void (*function)(), void *data, unsigned priority) {
+    fibers.push(
+        new Fiber(next_id++, function, data, is_running_task(), priority));
+}
 
 void Schedular::do_it() {
     get_context(&context);
     if (!fibers.empty()) {
-        Fiber *f = fibers.back();
+        Fiber *f = fibers.top();
+        if (f->auto_run) {
+            exit_flag = false;
+        }
 
-        if (!auto_run) {
-            if (f->auto_run) {
-                exit_flag = false;
-            }
-
-            if (exit_flag) {
-                exit_flag = false;
-                return;
-            }
+        if (exit_flag) {
+            exit_flag = false;
+            return;
         }
         running_fibers.push_back(f);
-        fibers.pop_back();
+        fibers.pop();
 
         Context *c = f->get_context();
 
@@ -49,6 +51,7 @@ void Schedular::do_it() {
 }
 
 void Schedular::fiber_exit() {
+
     if (running_fibers.size() > 1) {
         running_fibers.pop_back();
         Context *c = running_fibers.back()->get_context();
@@ -68,8 +71,8 @@ void Schedular::yield() {
     if (!fibers.empty()) {
         Context *out = running_fibers.back()->get_context();
 
-        running_fibers.push_back(fibers.back());
-        fibers.pop_back();
+        running_fibers.push_back(fibers.top());
+        fibers.pop();
 
         Context *in = running_fibers.back()->get_context();
 
@@ -78,7 +81,5 @@ void Schedular::yield() {
 }
 
 bool Schedular::is_running_task() { return !running_fibers.empty(); }
-
-void Schedular::set_auto_run(bool val) { auto_run = val; }
 
 Schedular *Schedular::instance = nullptr;

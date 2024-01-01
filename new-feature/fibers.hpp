@@ -7,7 +7,7 @@
 /// note call control flow within a fiber must terminate with a call
 /// to fiber_exit. Returning from a fiber without a call fiber_exit is
 /// undefined.
-#include <task-3/scheduler.hpp>
+#include "scheduler.hpp"
 void fiber_exit();
 
 /// @brief get pointer to data passed as part of fiber creation
@@ -32,7 +32,7 @@ void yield();
 ///
 /// @param function fiber execution body
 /// @param data pointer acess from running fiber
-void spawn(void (*function)(), void *data = nullptr);
+void spawn(void (*function)(), void *data = nullptr, unsigned priority = 1);
 
 /// @brief run with the current set of fibers queued.
 ///
@@ -40,6 +40,3 @@ void spawn(void (*function)(), void *data = nullptr);
 ///
 /// Calling do_it within a fiber is undefined.
 void do_it();
-
-void auto_run();
-void manual_run();
