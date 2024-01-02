@@ -32,15 +32,6 @@ int main() {
     bar_context.rip = (void *)bar;
     bar_context.rsp = create_stack();
 
-    volatile int x = 0;
-
-    get_context(&main_context);
-
-    if (x == 0) {
-        x++;
-        set_context(&foo_context);
-    } else if (x == 1) {
-        x++;
-        set_context(&bar_context);
-    }
+    swap_context(&main_context, &foo_context);
+    swap_context(&main_context, &bar_context);
 }

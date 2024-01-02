@@ -7,3 +7,6 @@ using a single thread given to you by the OS, then sharing it among multiple fib
 - they dont work with lambdas
 
 You may be wondering why we need custom stacks for our fibers. Functions have locals that live on the stack, when we switch between fibers, we need to preserve the contents of those locals so when we resume they’ll still be there. Similarly, in the case of languages like C++, the objects that live on the stack will have their destructors called upon return of the function. Those destructors reference the object on the stack directly through their this pointer which will point into the stack.
+
+- in task 1 main 3, the `set_context(main)` acts as a fiber_exit
+- in task 1 main 4, the `swap_context` acts as a yield from main to the other functions, if we make all the contexts global, we can yield from any function to another, but instead of calling set_context(main) at the end we will need to know the yielder

@@ -1,13 +1,13 @@
 //-------------------------------------------------------------------
 // API for fibers
 //-------------------------------------------------------------------
+#include <task-3/scheduler.hpp>
 
 /// @brief terminates a fiber
 ///
 /// note call control flow within a fiber must terminate with a call
 /// to fiber_exit. Returning from a fiber without a call fiber_exit is
 /// undefined.
-#include <task-3/scheduler.hpp>
 void fiber_exit();
 
 /// @brief get pointer to data passed as part of fiber creation
