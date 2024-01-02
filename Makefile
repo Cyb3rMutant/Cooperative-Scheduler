@@ -1,6 +1,18 @@
-CC = clang++
-FLAGS = -g -std=c++17 
-TASK = task-3
+.PHONY = example unit_test
 
-build_it:
-		$(CC) $(FLAGS) -o main $(TASK)/unit.cpp  $(TASK)/fibers.cpp $(TASK)/fiber.cpp $(TASK)/schedular.cpp context/context.cpp simpletest/simpletest.cpp; ./main
+CC = clang++
+FLAGS = -I./include -g -std=c++17
+
+TASK ?= task-3
+MAIN ?= main_1
+
+SRCS = $(wildcard include/$(TASK)/*.cpp)
+CONTEXT = include/context/context.cpp
+SIMPLETEST = include/simpletest/simpletest.cpp
+FREELIST = include/freelist/freelist.cpp
+
+example:
+		$(CC) $(FLAGS) -o main examples/$(TASK)/$(MAIN).cpp $(SRCS) $(CONTEXT) $(FREELIST); ./main
+
+unit_test:
+		$(CC) $(FLAGS) -o main unit-tests/$(TASK).cpp $(SRCS) $(CONTEXT) $(SIMPLETEST) $(FREELIST); ./main
