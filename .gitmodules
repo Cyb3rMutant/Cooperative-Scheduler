@@ -1,6 +1,6 @@
 [submodule "context"]
-	path = context
+	path = include/context
 	url = https://gitlab.uwe.ac.uk/br-gaster/context
 [submodule "simpletest"]
-	path = simpletest
+	path = include/simpletest
 	url = https://github.com/kudaba/simpletest
