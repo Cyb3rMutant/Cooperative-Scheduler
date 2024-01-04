@@ -33,7 +33,7 @@ and this is to run the unit tests:
 $ make unit_test TASK=<task number>
 ```
 
-where `<task number>` is 1, 2 or 3 and `<example number>` is the number of the file in the examples directory
+where `<task number>` is 1, 2, 3 or extra for the new features and `<example number>` is the number of the file in the examples directory
 
 ## Use of the API
 
@@ -170,9 +170,13 @@ This is where the `Scheduler` comes in palce.
 
 ## `Scheduler`
 
-The scheduler manages fibers is a more systematic way, instead of having random parts of the code do stuff on thier own.
+The scheduler manages fibers in a more systematic way, instead of having random parts of the code do stuff on thier own.
 
 As we saw in all the previous examples, the first tasks that get created, get executed first, which is also know as fist in first out system (FIFO), thus the internal data structure that will be used to store and manage fibers in our scheduler is a **queue**.
+
+![queue](./img/queue.gif)
+
+source: https://javascript.plainenglish.io/data-structures-in-javascript-28ce180b7673
 
 In addition to the queue field theres 2 other fields in the class, one that stores a context for the scheduler that gets used upon exit, which is the same as the global context we've been using. and another that stores the currently running fiber, so it can be used when the fiber data is requested
 
@@ -352,6 +356,10 @@ now the constructor does not create a stack rather it requestes one from the man
 ## priority queue
 
 the scheduler's implementation replaced the queue data structure with a priority queue, to for a more flexible scheduling mechanism. The priority queue allows tasks to be organized based on their priority levels, enabling the scheduler to execute higher-priority tasks before lower-priority ones.
+
+![priority queue](./img/priority_que.webp)
+
+source: https://learnersbucket.com/tutorials/data-structures/priority-queue-implementation-in-javascript/
 
 This adjustment proves particularly beneficial in scenarios where certain tasks require immediate attention or have dependencies. For example, in a real-time system handling both user interface updates and background processing, the priority queue ensures that UI-related tasks take precedence over less time-sensitive background tasks.
 
