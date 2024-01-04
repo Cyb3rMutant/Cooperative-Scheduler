@@ -22,10 +22,9 @@ Fiber::Fiber(void (*function)(), void *data, bool run) {
     // Create a new execution context for the fiber
     context = new Context;
 
-    // Set the instruction pointer to the provided function
+    // Setting the instruction pointer and stack pointer for the execution
+    // context.
     context->rip = (void *)function;
-
-    // Set the stack pointer to the top of the stack
     context->rsp = stack_top;
 }
 

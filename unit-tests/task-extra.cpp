@@ -2,8 +2,7 @@
 #include <cstdio>
 #include <iostream>
 #include <simpletest/simpletest.h>
-#include <string>
-#include <task-3/fibers.hpp>
+#include <task-extra/fibers.hpp>
 
 char const *groups[] = {"fibers"};
 

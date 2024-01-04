@@ -317,6 +317,77 @@ There is 30 unit tests for this task that cover a wide range of combinations, in
 
 additional features have been researched and implemented in a new file to leave the original files clean
 
+## free list
+
+to optimize the fiber implementation, the `new` general-purpose allocators was replaced with a freelist allocator. The rationale behind this shift lies in the inherent inefficiency of using it for allocating fiber stacks, given their relatively slow performance.
+
+By using an upfront allocation of stacks coupled in a freelist. This is because a freelist provides the most recently deallocated stack upon allocation. This feature is particularly advantageous for caching purposes.
+
+For instance, when fiber B reuses the stack allocation from a just-completed fiber A, the freelist eliminates the necessity to reach out to system memory to allocate a stack, instead it will just retrieve a cached one.
+
+### Implementation
+
+It is simply done using a linked list, with each node storing the stack bottom and top and the pointer to the next node. Then there is a manager that tracks th
+
+#### `FiberStack`
+
+This structure is the nodes of the linked list, and has fields to store stack bottom and top and the next node in the list.
+
+#### `MemoryManager`
+
+This is the actual linked list, it has one field only to keep a reference to the head. It has two methods, an overloaded constructor and a destructor:
+
+- `MemoryManager(unsigned s)`: allocates `s` many stacks in a linked list fashion
+
+- `alloc()`: which returns the head, and if the list is empty it creates a new one
+
+- `dealloc(FiberStack)`: takes back the node pointer and makes it the head
+
+- Destructor: deallocates all the stacks
+
+### `Fiber` changes
+
+now the constructor does not create a stack rather it requestes one from the manager and gives the top of it to the context. Upon destruction, it gives back the node to the manager
+
 ## priority queue
 
-## free list
+the scheduler's implementation replaced the queue data structure with a priority queue, to for a more flexible scheduling mechanism. The priority queue allows tasks to be organized based on their priority levels, enabling the scheduler to execute higher-priority tasks before lower-priority ones.
+
+This adjustment proves particularly beneficial in scenarios where certain tasks require immediate attention or have dependencies. For example, in a real-time system handling both user interface updates and background processing, the priority queue ensures that UI-related tasks take precedence over less time-sensitive background tasks.
+
+### `Scheduler` changes
+
+The obvious change is that the fibers queue was replaced with a priority queue
+
+### `Fiber` changes
+
+- A new `priority` field is added, which resembles the desides its priority in the scheduler
+
+- A new `id` field, it was need due to weak-ordering nature of the `priority_queue` data structure of the standard library. thus this field is used in the case of 2 fibers having the same priority, the one with the lower `id` takes precedence since its a FIFO system
+
+- a comparison operator is implemented for the class, as it is needed by the data structure internal implementation to decide the order
+
+- a comparison class `CompareFiber` is made with an overloaded `operator()` which takes 2 `Fiber` pointers, it is needed because we store pointers to fibers in the queue, and the comparison between them would return the greater of the 2 pointers
+
+## Examples
+
+### 1
+
+The example shows how the priority queue works and sorts tasks, this is how they would look before execution:
+
+```
+    spawn(f4, nullptr, 4);
+    spawn(f2, nullptr, 3);
+    spawn(f1, nullptr, 3);
+    spawn(f3, nullptr, 2);
+    spawn(f1, nullptr, 1);
+    spawn(f4, nullptr, 1);
+```
+
+### 2
+
+Here it shows how the priority would act as a normal queue if all of the tasks where of the same priority
+
+### 3
+
+this one is about the freelist, and that it wouldnt crash with allocations more than the original

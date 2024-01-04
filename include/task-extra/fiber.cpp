@@ -4,20 +4,30 @@
 #include <cstdio>
 #include <cstring>
 #include <freelist/freelist.hpp>
+#include <iostream>
+
+unsigned Fiber::next_id = 1;
 
 MemoryManager manager(10);
 
-Fiber::Fiber(unsigned id, void (*function)(), void *data, bool run,
-             unsigned priority) {
+Fiber::Fiber(void (*function)(), void *data, bool run, unsigned priority) {
     auto_run = run;
 
+    // Allocating a fiber stack from the memory manager.
     stack = manager.alloc();
 
-    this->id = id;
+    // Assigning a unique identifier to the fiber.
+    id = next_id++;
+
+    // Assigning user-defined data and priority to the fiber.
     this->data = data;
     this->priority = priority;
 
+    // Creating a new execution context for the fiber.
     context = new Context;
+
+    // Setting the instruction pointer and stack pointer for the execution
+    // context.
     context->rip = (void *)function;
     context->rsp = stack->stack_top;
 }

@@ -41,8 +41,8 @@ class Fiber {
     Context *get_context();
 
     /**
-     * @brief Gets the user-defined data associated with the fiber.
-     * @return A pointer to the user-defined data associated with the fiber.
+     * @brief gets the user-defined data associated with the fiber.
+     * @return a pointer to the user-defined data associated with the fiber.
      */
     void *get_data();
 

@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <iostream>
-#include <new-feature/fibers.hpp>
+#include <task-extra/fibers.hpp>
 
 void f1() {
     std::cout << "f1\n";
@@ -21,24 +21,13 @@ void f4() {
 }
 
 int main(int argc, char *argv[]) {
-    spawn(f1);
-    spawn(f2, nullptr, 5);
-    spawn(f1, nullptr, 2);
+    spawn(f1, nullptr, 1);
+    spawn(f2, nullptr, 3);
+    spawn(f1, nullptr, 3);
+    spawn(f4, nullptr, 1);
     spawn(f3, nullptr, 2);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
-    spawn(f4);
+    spawn(f4, nullptr, 4);
 
-    do_it();
-    do_it();
     do_it();
     do_it();
     do_it();

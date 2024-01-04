@@ -3,6 +3,8 @@
 #include "fiber.hpp"
 #include <context/context.hpp>
 #include <deque>
+#include <queue>
+#include <vector>
 
 /**
  * @class Schedular
@@ -77,7 +79,8 @@ class Schedular {
      */
     static Schedular *instance;
 
-    std::deque<Fiber *> fibers; ///< Queue of fibers waiting to be executed.
+    std::priority_queue<Fiber *, std::vector<Fiber *>, CompareFiber>
+        fibers; ///< Priority queue of fibers waiting to be executed.
     std::deque<Fiber *> running_fibers; ///< Queue of currently running fibers.
     Context context; ///< The context for the scheduler itself.
     bool exit_flag;  ///< Flag indicating if the scheduler should exit.

@@ -1,13 +1,13 @@
 //-------------------------------------------------------------------
 // API for fibers
 //-------------------------------------------------------------------
+#include "scheduler.hpp"
 
 /// @brief terminates a fiber
 ///
 /// note call control flow within a fiber must terminate with a call
 /// to fiber_exit. Returning from a fiber without a call fiber_exit is
 /// undefined.
-#include "scheduler.hpp"
 void fiber_exit();
 
 /// @brief get pointer to data passed as part of fiber creation
@@ -40,3 +40,9 @@ void spawn(void (*function)(), void *data = nullptr, unsigned priority = 1);
 ///
 /// Calling do_it within a fiber is undefined.
 void do_it();
+
+/// @brief Auto-runs all fibers scheduled to execute upon calling do_it
+void auto_run();
+
+/// @brief Manually runs fibers, requiring explicit calling to do_it
+void manual_run();
