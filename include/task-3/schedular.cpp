@@ -49,8 +49,7 @@ void Schedular::do_it() {
             }
         }
 
-        // Move the fiber to the running fibers queue and pop it from the
-        // priority queue.
+        // Move the fiber to the running fibers queue and pop it from the queue.
         running_fibers.push_back(f);
         fibers.pop_back();
 

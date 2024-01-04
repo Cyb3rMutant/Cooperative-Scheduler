@@ -12,7 +12,7 @@ SIMPLETEST = include/simpletest/simpletest.cpp
 FREELIST = include/freelist/freelist.cpp
 
 example:
-		$(CC) $(FLAGS) -o main examples/task-$(TASK)/main_$(MAIN).cpp $(SRCS) $(CONTEXT) $(FREELIST); ./main
+		@$(CC) $(FLAGS) -o main examples/task-$(TASK)/main_$(MAIN).cpp $(SRCS) $(CONTEXT) $(FREELIST); ./main
 
 unit_test:
-		$(CC) $(FLAGS) -o main unit-tests/task-$(TASK).cpp $(SRCS) $(CONTEXT) $(SIMPLETEST) $(FREELIST); ./main
+		@$(CC) $(FLAGS) -o main unit-tests/task-$(TASK).cpp $(SRCS) $(CONTEXT) $(SIMPLETEST) $(FREELIST); ./main

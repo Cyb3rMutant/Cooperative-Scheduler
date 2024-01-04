@@ -1,3 +1,63 @@
+- [Introduction](#introduction)
+  - [Cooperative scheduling](#cooperative-scheduling)
+  - [How it is done](#how-it-is-done)
+- [How to use](#how-to-use)
+  - [Examples and unit tests](#examples-and-unit-tests)
+  - [Use of the API](#use-of-the-api)
+- [Task 1](#task-1)
+  - [Example 1](#example-1)
+  - [Example 2](#example-2)
+  - [Example 3](#example-3)
+  - [Example 4](#example-4)
+- [Task 2](#task-2)
+  - [`Fiber`](#-fiber-)
+    - [Constructors](#constructors)
+      - [`Fiber()`](#-fiber---)
+      - [`Fiber(void (*function)(), void *data = nullptr)`](#-fiber-void---function-----void--data---nullptr--)
+    - [Methods](#methods)
+      - [`get_context()`](#-get-context---)
+      - [`get_data()`](#-get-data---)
+    - [Examples](#examples)
+  - [`Scheduler`](#-scheduler-)
+    - [Constructors](#constructors-1)
+    - [Methods](#methods-1)
+      - [`spawn(Fiber)`](#-spawn-fiber--)
+      - [`do_it()`](#-do-it---)
+      - [`fiber_exit()`](#-fiber-exit---)
+      - [`get_data()`](#-get-data----1)
+    - [Examples](#examples-1)
+  - [`Fibers` API](#-fibers--api)
+    - [Examples](#examples-2)
+  - [Class diagram](#class-diagram)
+- [Task 3](#task-3)
+  - [changes](#changes)
+    - [Singleton](#singleton)
+    - [manual execution of tasks](#manual-execution-of-tasks)
+      - [exit flag](#exit-flag)
+      - [scheduler auto run flag](#scheduler-auto-run-flag)
+      - [fiber auto run flag](#fiber-auto-run-flag)
+    - [running fibers stack](#running-fibers-stack)
+  - [`yield()`](#-yield---)
+  - [Example](#example)
+  - [Class diagram](#class-diagram-1)
+- [Extra features](#extra-features)
+  - [free list](#free-list)
+    - [Implementation](#implementation)
+      - [`FiberStack`](#-fiberstack-)
+      - [`MemoryManager`](#-memorymanager-)
+    - [`Fiber` changes](#-fiber--changes)
+  - [priority queue](#priority-queue)
+    - [`Scheduler` changes](#-scheduler--changes)
+    - [`Fiber` changes](#-fiber--changes-1)
+  - [Examples](#examples-3)
+    - [1](#1)
+    - [2](#2)
+    - [3](#3)
+  - [Class diagram](#class-diagram-2)
+- [Unit tests](#unit-tests)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 # Introduction
 
 ## Cooperative scheduling
@@ -117,21 +177,6 @@ This is where we start working with fibers and a scheduler, by building on top o
 
 ## `Fiber`
 
-```mermaid
-classDiagram
-    class Fiber {
-        + Fiber(function, data, run)
-        + ~Fiber()
-        + get_context() Context**
-        + get_data() void**
-
-        - Context* context
-        - char* stack_top
-        - char* stack_bottom
-        - void* data
-    }
-```
-
 The `Fiber` class simply extracts what was done in Task 1 example 2.
 
 ### Constructors
@@ -230,6 +275,39 @@ The only fucntion that has a differnce is the `spawn` one, as it takes the funct
 
 Example 3 is pretty much the same as 2, just simplified by taking out the ugly bits, we can see all calls are to functions, and there is no global variable that the user has to deal with
 
+## Class diagram
+
+```mermaid
+classDiagram
+    class Schedular {
+        + Schedular()
+        + ~Schedular()
+        + spawn(Fiber*)
+        + do_it()
+        + fiber_exit()
+        + get_data() void**
+        + yield()
+
+        - deque<Fiber*> fibers
+        - Fiber *current_fiber
+        - Context context
+    }
+
+    class Fiber {
+        + Fiber(void(*)(), void*)
+        + ~Fiber()
+        + get_context() Context**
+        + get_data() void**
+
+        - Context *context
+        - char *stack_top
+        - char *stack_bottom
+        - void *data
+    }
+
+    Schedular o-- Fiber
+```
+
 # Task 3
 
 So far the functions we spawn keep executing until they finish, but this lacks the term "cooperative", unlike what we discussed in the intro. In order to have cooperative behaviour we will need a new functionality `yield` which allows other functions to execute in the middle of a function's execution
@@ -313,9 +391,45 @@ fiber_exit: foo1 -> main
 
 (note we are using foo1 and foo2 for clarity)
 
-## Unit tests
+## Class diagram
 
-There is 30 unit tests for this task that cover a wide range of combinations, in order to test if the fibers are run in the correct order and timings, each test is run twice once with an int and different math operations are applied on it, then in the test case we check for order of operations. the second run is with a string and functions append characters to it, then in the test case we check if the sequence is correct
+```mermaid
+classDiagram
+    class Schedular {
+        + ~Schedular()
+        + get_instance() Schedular **
+        + spawn(Fiber *f)
+        + do_it()
+        + fiber_exit()
+        + get_data() void**
+        + yield()
+        + is_running_task() bool
+        + set_auto_run(bool)
+        - Schedular()
+
+        - Schedular *instance
+        - deque<Fiber*> fibers
+        - deque<Fiber*> running_fibers
+        - Context context
+        - bool exit_flag
+        - bool auto_run
+    }
+
+    class Fiber {
+        + Fiber(void (*)(), void*, bool)
+        + ~Fiber()
+        + get_context() Context**
+        + get_data() void**
+
+        + bool auto_run
+        - Context *context
+        - char *stack_top
+        - char *stack_bottom
+        - void *data
+    }
+
+    Schedular o--Fiber
+```
 
 # Extra features
 
@@ -399,3 +513,68 @@ Here it shows how the priority would act as a normal queue if all of the tasks w
 ### 3
 
 this one is about the freelist, and that it wouldnt crash with allocations more than the original
+
+## Class diagram
+
+```mermaid
+classDiagram
+    class Schedular {
+        + ~Schedular()
+        + get_instance() Schedular **
+        + spawn(Fiber *f)
+        + do_it()
+        + fiber_exit()
+        + get_data() void**
+        + yield()
+        + is_running_task() bool
+        + set_auto_run(bool)
+        - Schedular()
+
+        - Schedular *instance
+        - priority_queue<Fiber*> fibers
+        - deque<Fiber*> running_fibers
+        - Context context
+        - bool exit_flag
+        - bool auto_run
+    }
+
+    class Fiber {
+        + Fiber(void (*)(), void*, bool, unsigned)
+        + ~Fiber()
+        + get_context() Context**
+        + get_data() void**
+
+        + bool auto_run
+        - Context *context
+        - FiberStack *stack_bottom
+        - void *data
+        - unsigned id
+        - unsigned next_id $
+    }
+
+    class MemoryManager{
+      + MemoryManager(unsigned)
+      + alloc() FiberStack**
+      + dealloc(FiberStack*)
+
+      - FiberStack *head
+    }
+
+    class FiberStack{
+      + FiberStack(FiberStack *n = nullptr)
+      + ~FiberStack()
+
+      - char *stack_bottom
+      - char *stack_top
+      - FiberStack *next
+    }
+
+    Schedular o--Fiber
+    MemoryManager o-- FiberStack
+    Fiber ..> MemoryManager
+    Fiber --> FiberStack
+```
+
+# Unit tests
+
+There is 34 unique unit tests for the tasks that cover a wide range of combinations, in order to test if the fibers are run in the correct order and timings, each test is run twice once with an int and different math operations are applied on it. and in the test case we check for order of operations. the second run is with a string and functions append characters to it, then in the test case we check if the sequence is correct
