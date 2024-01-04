@@ -13,7 +13,7 @@ class Fiber {
     void *get_data();
 
   private:
-    Context context;
+    Context *context;
     char *stack_top;
     char *stack_bottom;
     void *data;

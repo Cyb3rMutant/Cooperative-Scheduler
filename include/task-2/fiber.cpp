@@ -14,13 +14,13 @@ Fiber::Fiber(void (*function)(), void *data) {
 
     this->data = data;
 
-    context = Context();
-    context.rip = (void *)function;
-    context.rsp = stack_top;
+    context = new Context;
+    context->rip = (void *)function;
+    context->rsp = stack_top;
 }
 
 Fiber::~Fiber() { delete[] stack_bottom; }
 
-Context *Fiber::get_context() { return &context; }
+Context *Fiber::get_context() { return context; }
 
 void *Fiber::get_data() { return data; }

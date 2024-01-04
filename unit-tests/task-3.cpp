@@ -505,8 +505,6 @@ DEFINE_TEST_G(Test15b, fibers) {
     TEST_MESSAGE(d == "aaaaa", "function was ot called");
 }
 
-// for auto run, spawn a task and it should auto run as well
-
 int main() {
     bool pass = true;
 

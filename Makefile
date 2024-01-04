@@ -7,7 +7,7 @@ TASK ?= 3
 MAIN ?= 1
 
 SRCS = $(wildcard include/task-$(TASK)/*.cpp)
-CONTEXT = include/context/context.cpp
+CONTEXT = include/context/context.s
 SIMPLETEST = include/simpletest/simpletest.cpp
 FREELIST = include/freelist/freelist.cpp
 

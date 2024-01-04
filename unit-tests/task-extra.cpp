@@ -1,6 +1,5 @@
 #include <cstddef>
 #include <cstdio>
-#include <iostream>
 #include <simpletest/simpletest.h>
 #include <string>
 #include <task-extra/fibers.hpp>
@@ -58,6 +57,13 @@ void multi_spawn_2() {
     fiber_exit();
 }
 
+void mult_3_and_add_high_priority_7() {
+    int *x = get_data<int>();
+    (*x) *= 3;
+    spawn(sub_7_and_task_2, x, 999);
+    fiber_exit();
+}
+
 void add_a() {
     std::string *x = get_data<std::string>();
     x->push_back('a');
@@ -106,6 +112,13 @@ void multi_spawn_a() {
     spawn(add_a, x);
     spawn(add_a, x);
     spawn(add_a, x);
+    fiber_exit();
+}
+
+void y_and_add_high_priority_c() {
+    std::string *x = get_data<std::string>();
+    x->push_back('y');
+    spawn(c_and_task_a, x, 999);
     fiber_exit();
 }
 
@@ -529,7 +542,31 @@ DEFINE_TEST_G(Test16b, fibers) {
     manual_run();
 }
 
-// for auto run, spawn a task and it should auto run as well
+DEFINE_TEST_G(Test17a, fibers) {
+    int d = 10;
+    int *dp = &d;
+    auto_run();
+    spawn(add_2, dp, 4);
+    spawn(mult_3_and_add_high_priority_7, dp, 4);
+    spawn(mult_5_and_yield, dp, 4);
+    spawn(add_2, dp, 1);
+    do_it();
+    TEST_MESSAGE(d == 149, "function was ot called");
+    manual_run();
+}
+
+DEFINE_TEST_G(Test17b, fibers) {
+    std::string d;
+    std::string *dp = &d;
+    auto_run();
+    spawn(add_a, dp, 4);
+    spawn(y_and_add_high_priority_c, dp, 4);
+    spawn(b_and_yield, dp, 4);
+    spawn(add_a, dp, 1);
+    do_it();
+    TEST_MESSAGE(d == "aycbaa", "function was ot called");
+    manual_run();
+}
 
 int main() {
     bool pass = true;
