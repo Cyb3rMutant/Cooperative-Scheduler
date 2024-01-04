@@ -21,6 +21,7 @@ void f4() {
 }
 
 int main(int argc, char *argv[]) {
+    auto_run();
     spawn(f1, nullptr, 1);
     spawn(f2, nullptr, 3);
     spawn(f1, nullptr, 3);
@@ -28,11 +29,6 @@ int main(int argc, char *argv[]) {
     spawn(f3, nullptr, 2);
     spawn(f4, nullptr, 4);
 
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
     do_it();
 
     std::cout << "hello";

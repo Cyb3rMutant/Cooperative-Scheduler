@@ -99,3 +99,5 @@ void Schedular::yield() {
 }
 
 bool Schedular::is_running_task() { return !running_fibers.empty(); }
+
+void Schedular::set_auto_run(bool val) { auto_run = val; }

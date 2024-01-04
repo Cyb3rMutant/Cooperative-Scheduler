@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <iostream>
 #include <simpletest/simpletest.h>
+#include <string>
 #include <task-extra/fibers.hpp>
 
 char const *groups[] = {"fibers"};
@@ -456,7 +457,6 @@ DEFINE_TEST_G(Test14a, fibers) {
     }
 
     do_it();
-    std::cout << d;
     TEST_MESSAGE(d == 2, "functions were not called correctly");
 
     auto_run();
@@ -477,7 +477,6 @@ DEFINE_TEST_G(Test14b, fibers) {
     }
 
     do_it();
-    std::cout << d;
     TEST_MESSAGE(d == "a", "functions were not called correctly");
 
     auto_run();
@@ -502,6 +501,32 @@ DEFINE_TEST_G(Test15b, fibers) {
     spawn(multi_spawn_a, dp);
     do_it();
     TEST_MESSAGE(d == "aaaaa", "function was ot called");
+}
+
+DEFINE_TEST_G(Test16a, fibers) {
+    int d = 10;
+    int *dp = &d;
+    auto_run();
+    spawn(mult_5_and_yield, dp, 1);
+    spawn(sub_7_and_task_2, dp, 3);
+    spawn(mult_5_and_yield, dp, 3);
+    spawn(add_2, dp, 2);
+    do_it();
+    TEST_MESSAGE(d == 87, "function was ot called");
+    manual_run();
+}
+
+DEFINE_TEST_G(Test16b, fibers) {
+    std::string d;
+    std::string *dp = &d;
+    auto_run();
+    spawn(b_and_yield, dp, 1);
+    spawn(c_and_task_a, dp, 3);
+    spawn(b_and_yield, dp, 3);
+    spawn(add_a, dp, 2);
+    do_it();
+    TEST_MESSAGE(d == "cbaba", "function was ot called");
+    manual_run();
 }
 
 // for auto run, spawn a task and it should auto run as well

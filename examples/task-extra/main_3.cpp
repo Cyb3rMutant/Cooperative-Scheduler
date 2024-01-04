@@ -5,6 +5,7 @@
 void f() { fiber_exit(); }
 
 int main(int argc, char *argv[]) {
+    auto_run();
     spawn(f);
     spawn(f);
     spawn(f);
@@ -18,17 +19,6 @@ int main(int argc, char *argv[]) {
     spawn(f);
     spawn(f);
 
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
-    do_it();
     do_it();
 
     std::cout << "hello";
