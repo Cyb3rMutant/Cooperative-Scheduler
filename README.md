@@ -37,6 +37,7 @@
       - [scheduler auto run flag](#scheduler-auto-run-flag)
       - [fiber auto run flag](#fiber-auto-run-flag)
     - [running fibers stack](#running-fibers-stack)
+    - [`get_data()`](#-get-data----2)
   - [`yield()`](#-yield---)
   - [Example](#example)
   - [Class diagram](#class-diagram-1)
@@ -344,6 +345,10 @@ this also required a new method inside the scheduler to check if there is runnin
 ### running fibers stack
 
 and the final change is swapping the `current_fiber` field with a stack, which is necessary for yielding. For example if we spawned tasks A and B, and task A yields, before yielding it is the `current_fiber` but after yield its B, so now A is lost, thats why a stack has been introduced.
+
+### `get_data()`
+
+the function was made a template in the API so the user does not have to deal with pointer casting
 
 ## `yield()`
 
