@@ -7,6 +7,7 @@
 Schedular::Schedular() {
     context = Context();
     fibers = std::deque<Fiber *>();
+    running_fibers = std::deque<Fiber *>();
     exit_flag = false;
     auto_run = false;
 }

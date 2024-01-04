@@ -15,23 +15,13 @@ void bar() {
     fiber_exit();
 }
 
-void f() {
-    std::cout << "f2\n";
-    spawn(bar);
-    fiber_exit();
-}
-
 int main(int argc, char *argv[]) {
     spawn(foo);
     spawn(foo);
     spawn(bar);
-    spawn(bar);
 
     do_it();
-    do_it();
 
-    spawn(f);
-    do_it();
     std::cout << "hello";
 
     return 0;

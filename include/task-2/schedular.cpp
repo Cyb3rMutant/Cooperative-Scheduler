@@ -22,8 +22,6 @@ void Schedular::do_it() {
         Context *c = current_fiber->get_context();
 
         set_context(c);
-    } else {
-        exit(0);
     }
 }
 
