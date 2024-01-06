@@ -36,7 +36,6 @@
       - [exit flag](#exit-flag)
       - [scheduler auto run flag](#scheduler-auto-run-flag)
       - [fiber auto run flag](#fiber-auto-run-flag)
-    - [running fibers stack](#running-fibers-stack)
     - [`get_data()`](#-get-data----2)
   - [`yield()`](#-yield---)
   - [Example](#example)
@@ -354,7 +353,7 @@ the implemntation of yield is very similar to that of `do_it`, the only differen
 
 example 1 and 2 show how `yield` works, we also have a nested yield. the best way to show it is using a drawing:
 
-![yield](./img/yield_drawing.jpg)
+![yield](./img/yield_drawing.png)
 
 and to look at it from the perspective of the queue:
 
