@@ -342,10 +342,6 @@ In addition to the flag in the scheduler there is another flag in the fiber, bec
 
 this also required a new method inside the scheduler to check if there is running tasks called `is_running_task`
 
-### running fibers stack
-
-and the final change is swapping the `current_fiber` field with a stack, which is necessary for yielding. For example if we spawned tasks A and B, and task A yields, before yielding it is the `current_fiber` but after yield its B, so now A is lost, thats why a stack has been introduced.
-
 ### `get_data()`
 
 the function was made a template in the API so the user does not have to deal with pointer casting
@@ -354,44 +350,42 @@ the function was made a template in the API so the user does not have to deal wi
 
 the implemntation of yield is very similar to that of `do_it`, the only difference is that we do not need to create a checkpoint to come back to as we did with the scheduler's context. for it we use `swap_context` which takes 2 contexts, one is the one already running and the other is reclaimed off the queue, then they get swapped
 
-this also requires a change in the `fiber_exit`, because instead of going back to `do_it`, we want to go back to the last point reached in the previous fiber, to do that we check that the stack is not empty to make sure something yielded, then pop the stack and swap to that fiber's context, and once it finishes and calls `fiber_exit` the stack will be empty so control goes back to `do_it`
-
 ## Example
 
-example one shows how `yield` works, we also have a nested yield. the best way to show it is using a drawing:
+example 1 and 2 show how `yield` works, we also have a nested yield. the best way to show it is using a drawing:
 
 ![yield](./img/yield_drawing.jpg)
 
-and to look at it from the perspective of the heap and stack:
+and to look at it from the perspective of the queue:
 
 ```
 spawned all three
     fibers: ['foo1', 'foo2', 'bar']
-    running: []
+    running: nullptr
 
 do_it: main -> foo1
     fibers: ['foo2', 'bar']
-    running: ['foo1']
+    running: 'foo1'
 
 yield: foo1 -> foo2
-    fibers: ['bar']
-    running: ['foo1', 'foo2']
+    fibers: ['bar', 'foo1']
+    running: 'foo2'
 
 yield: foo2 -> bar
-    fibers: []
-    running: ['foo1', 'foo2', 'bar']
+    fibers: ['foo1', 'foo2']
+    running: 'bar'
 
-fiber_exit: bar -> foo2
-    fibers: []
-    running: ['foo1', 'foo2']
+fiber_exit: bar -> foo1
+    fibers: ['foo2']
+    running: 'foo1'
 
-fiber_exit: foo2 -> foo1
+fiber_exit: foo1 -> foo2
     fibers: []
-    running: ['foo1']
+    running: 'foo2'
 
 fiber_exit: foo1 -> main
     fibers: []
-    running: []
+    running: nullptr
 ```
 
 (note we are using foo1 and foo2 for clarity)
@@ -414,7 +408,7 @@ classDiagram
 
         - Schedular *instance
         - deque<Fiber*> fibers
-        - deque<Fiber*> running_fibers
+        - Fiber *current_fiber
         - Context context
         - bool exit_flag
         - bool auto_run
@@ -551,7 +545,7 @@ classDiagram
 
         + bool auto_run
         - Context *context
-        - FiberStack *stack_bottom
+        - Fiber *current_fiber
         - void *data
         - unsigned id
         - unsigned next_id $

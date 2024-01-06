@@ -45,6 +45,8 @@ bool Fiber::operator<(const Fiber &other) const {
     return priority < other.priority;
 }
 
+void Fiber::update_id() { id = next_id++; }
+
 bool CompareFiber::operator()(const Fiber *lhs, const Fiber *rhs) const {
     return *lhs < *rhs;
 }

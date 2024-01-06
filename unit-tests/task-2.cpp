@@ -1,7 +1,4 @@
 #include <cstddef>
-#include <cstdio>
-#include <iostream>
-#include <ostream>
 #include <simpletest/simpletest.h>
 #include <string>
 #include <task-2/fibers.hpp>

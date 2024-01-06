@@ -16,6 +16,7 @@ void bar() {
 }
 
 int main(int argc, char *argv[]) {
+    auto_run();
     spawn(foo);
     spawn(foo);
     spawn(bar);

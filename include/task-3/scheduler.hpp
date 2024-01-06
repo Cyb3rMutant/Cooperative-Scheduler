@@ -78,8 +78,8 @@ class Schedular {
     static Schedular *instance;
 
     std::deque<Fiber *> fibers; ///< Queue of fibers waiting to be executed.
-    std::deque<Fiber *> running_fibers; ///< Queue of currently running fibers.
-    Context context; ///< The context for the scheduler itself.
-    bool exit_flag;  ///< Flag indicating if the scheduler should exit.
-    bool auto_run;   ///< Flag indicating manual or auto running
+    Fiber *current_fiber;       ///< Pointer of currently running fiber.
+    Context context;            ///< The context for the scheduler itself.
+    bool exit_flag; ///< Flag indicating if the scheduler should exit.
+    bool auto_run;  ///< Flag indicating manual or auto running
 };

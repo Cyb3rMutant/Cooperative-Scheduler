@@ -49,6 +49,8 @@ class Fiber {
      */
     void *get_data();
 
+    void update_id();
+
     /**
      * @brief Overloaded less-than operator to enable comparison between fibers
      * based on their priority.

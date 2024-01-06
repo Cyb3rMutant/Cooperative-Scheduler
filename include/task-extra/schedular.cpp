@@ -12,7 +12,7 @@ Schedular::Schedular() {
     // Initialize the context and data structures.
     context = Context();
     fibers = std::priority_queue<Fiber *, std::vector<Fiber *>, CompareFiber>();
-    running_fibers = std::deque<Fiber *>();
+    current_fiber = nullptr;
     exit_flag = false;
     auto_run = false;
 }
@@ -52,7 +52,7 @@ void Schedular::do_it() {
 
         // Move the fiber to the running fibers queue and pop it from the
         // priority queue.
-        running_fibers.push_back(f);
+        current_fiber = f;
         fibers.pop();
 
         // Set the context to the selected fiber's context.
@@ -62,42 +62,34 @@ void Schedular::do_it() {
 }
 
 void Schedular::fiber_exit() {
-    // check if other fibers yielded, so they are still running
-    if (running_fibers.size() > 1) {
-        // Pop the current running fiber and set the context to the previous
-        // one.
-        running_fibers.pop_back();
-        Context *c = running_fibers.back()->get_context();
-        set_context(c);
-    }
-
     // Set the exit flag and delete the terminated fiber.
     exit_flag = true;
-    Fiber *f = running_fibers.back();
-    running_fibers.pop_back();
-    delete f;
+    delete current_fiber;
+    current_fiber = nullptr;
 
     // Set the context back to the scheduler's context and go back to `do_it`.
     set_context(&context);
 }
 
-void *Schedular::get_data() { return running_fibers.back()->get_data(); }
+void *Schedular::get_data() { return current_fiber->get_data(); }
 
 void Schedular::yield() {
     if (!fibers.empty()) {
         // Save the context of the current running fiber.
-        Context *out = running_fibers.back()->get_context();
+        current_fiber->update_id();
+        spawn(current_fiber);
+        Context *out = current_fiber->get_context();
 
         // Switch to the context of the next fiber in the queue.
-        running_fibers.push_back(fibers.top());
+        current_fiber = fibers.top();
         fibers.pop();
-        Context *in = running_fibers.back()->get_context();
+        Context *in = current_fiber->get_context();
 
         // Perform the context switch.
         swap_context(out, in);
     }
 }
 
-bool Schedular::is_running_task() { return !running_fibers.empty(); }
+bool Schedular::is_running_task() { return current_fiber != nullptr; }
 
 void Schedular::set_auto_run(bool val) { auto_run = val; }
